@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function Home() {
   const [memes, setMemes] = useState([
@@ -13,6 +13,12 @@ export default function Home() {
   const [showOverlay, setShowOverlay] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const trendingRef = useRef(null);
+
+  const scrollToTrending = () => {
+    trendingRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -28,7 +34,7 @@ export default function Home() {
   const handleDownload = (url) => {
     const link = document.createElement("a");
     link.href = url;
-    link.download = "meme";
+    link.download = "gib-meme";
     link.click();
   };
 
@@ -49,21 +55,21 @@ export default function Home() {
       {/* Top Taskbar */}
       <header className="flex justify-between items-center px-8 py-4 border-b border-gray-800">
         <h1 className="font-mono text-3xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-500 text-transparent bg-clip-text">
-          Meme Hub
+          GIB HUB
         </h1>
         <nav className="flex gap-6 text-gray-300">
-          <button className="hover:text-white">Trending</button>
+          <button className="hover:text-white" onClick={scrollToTrending}>Trending</button>
           <button className="hover:text-white">Categories</button>
-          <button className="hover:text-white">About</button>
+          <button className="hover:text-white">About GIB</button>
         </nav>
       </header>
 
       {/* Hero Section */}
-      <main className="flex flex-col items-center text-center mt-12 px-6">
-        <h2 className="text-4xl font-bold mb-4">Your daily dose of memes 😂</h2>
+      <main className="flex flex-col items-center text-center mt-12 px-6 pb-16">
+        <h2 className="text-4xl font-bold mb-4">GIB delivers the memes </h2>
         <p className="text-gray-400 max-w-xl mb-8">
-          Upload your funniest memes or explore what others are sharing. Join
-          the fun, spread the laughter.
+          Submit your creations, explore the vault, and let GIB distribute the
+          laughs to the world.
         </p>
 
         {/* Buttons */}
@@ -72,13 +78,13 @@ export default function Home() {
             onClick={() => setShowOverlay("submit")}
             className="px-6 py-3 rounded-xl shadow-lg bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105"
           >
-            Submit Meme
+            Submit to GIB
           </button>
           <button
             onClick={() => setShowOverlay("download")}
             className="px-6 py-3 rounded-xl shadow-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105"
           >
-            Download Meme
+            Claim from GIB
           </button>
         </div>
 
@@ -86,7 +92,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row gap-4 items-center mb-10 w-full max-w-4xl">
           <input
             type="text"
-            placeholder="Search memes..."
+            placeholder="Search the GIB vault..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="flex-1 px-4 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -104,13 +110,13 @@ export default function Home() {
           </select>
         </div>
 
-        {/* Trending Memes Preview */}
-        <section className="w-full max-w-6xl">
+        {/* Meme Grid */}
+        <section className="w-full max-w-6xl" ref={trendingRef}>
           <h3 className="text-2xl font-semibold mb-6 text-left">
-            🔥 Trending Memes
+            GIB’s Trending Vault
           </h3>
           {filteredMemes.length === 0 ? (
-            <p className="text-gray-400">No memes found.</p>
+            <p className="text-gray-400">GIB has nothing for you right now 😔</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
               {filteredMemes.map((meme) => (
@@ -128,7 +134,7 @@ export default function Home() {
                       onClick={() => handleDownload(meme.url)}
                       className="bg-white text-black text-sm px-3 py-1 rounded-lg shadow"
                     >
-                      Download
+                      Claim Meme
                     </button>
                   </div>
                 </div>
@@ -136,6 +142,11 @@ export default function Home() {
             </div>
           )}
         </section>
+
+        {/* Bottom Rights Reserved */}
+        <p className="text-gray-500 text-sm mt-20">
+          © {new Date().getFullYear()} GIB. All rights reserved.
+        </p>
       </main>
 
       {/* Overlay */}
@@ -145,7 +156,7 @@ export default function Home() {
             {/* Header */}
             <div className="flex justify-between items-center p-6 border-b border-gray-700">
               <h2 className="text-2xl font-bold capitalize">
-                {showOverlay} Memes
+                {showOverlay === "submit" ? "Submit to GIB" : "Claim from GIB"}
               </h2>
               <button
                 onClick={() => setShowOverlay(null)}
@@ -172,7 +183,7 @@ export default function Home() {
                       onClick={() => handleDownload(meme.url)}
                       className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      Download
+                      Claim Meme
                     </button>
                   )}
                 </div>
