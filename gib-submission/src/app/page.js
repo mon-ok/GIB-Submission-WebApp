@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Featured from "./components/infiniteMarquee";
 
 export default function Home() {
   const [memes, setMemes] = useState([
@@ -87,6 +88,8 @@ export default function Home() {
             Claim from GIB
           </button>
         </div>
+
+        <Featured />
 
         {/* Search + Filter */}
         <div className="flex flex-col sm:flex-row gap-4 items-center mb-10 w-full max-w-4xl">
