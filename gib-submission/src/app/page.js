@@ -5,10 +5,10 @@ import Featured from "./components/infiniteMarquee";
 
 export default function Home() {
   const [memes, setMemes] = useState([
-    { id: 1, url: "https://i.imgur.com/abcd123.jpg", category: "funny" },
-    { id: 2, url: "https://i.imgur.com/efgh456.gif", category: "animals" },
-    { id: 3, url: "https://placekitten.com/300/200", category: "animals" },
-    { id: 4, url: "https://placekitten.com/301/200", category: "gaming" },
+    { id: 1, url: "https://i.imgur.com/abcd123.jpg", category: "funny", likes: 0, downloads: 0, liked: false },
+    { id: 2, url: "https://i.imgur.com/efgh456.gif", category: "animals", likes: 0, downloads: 0, liked: false },
+    { id: 3, url: "https://placekitten.com/300/200", category: "animals", likes: 0, downloads: 0, liked: false },
+    { id: 4, url: "https://placekitten.com/301/200", category: "gaming", likes: 0, downloads: 0, liked: false },
   ]);
 
   const [showOverlay, setShowOverlay] = useState(null);
@@ -27,16 +27,51 @@ export default function Home() {
       id: memes.length + index + 1,
       url: URL.createObjectURL(file),
       category: "uncategorized",
+      likes: 0,
+      downloads: 0,
     }));
     setMemes([...memes, ...newMemes]);
     setShowOverlay(null);
   };
 
-  const handleDownload = (url) => {
+  const handleDownload = (id, url) => {
+    // Increment download count
+    setMemes((prev) =>
+      prev.map((meme) =>
+        meme.id === id ? { ...meme, downloads: meme.downloads + 1 } : meme
+      )
+    );
+
+    // Detect file extension from URL
+    const urlObj = new URL(url);
+    const pathname = urlObj.pathname;
+    let ext = pathname.substring(pathname.lastIndexOf(".") + 1).toLowerCase();
+
+    // Fallback if no extension in URL
+    if (!ext || ext.length > 5) ext = "jpg";
+
+    // Create a descriptive filename
+    const fileName = `gib-meme-${id}.${ext}`;
+
+    // Trigger actual download
     const link = document.createElement("a");
     link.href = url;
-    link.download = "gib-meme";
+    link.download = fileName;
     link.click();
+  };
+
+  const handleLike = (id) => {
+    setMemes((prev) =>
+      prev.map((meme) =>
+        meme.id === id 
+          ? { 
+            ...meme, 
+            likes: meme.liked ? meme.likes - 1 : meme.likes + 1,
+            liked: !meme.liked, 
+            } 
+          : meme
+      )
+    );
   };
 
   // Apply search + category filtering
@@ -67,7 +102,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <main className="flex flex-col items-center text-center mt-12 px-6 pb-16">
-        <h2 className="text-4xl font-bold mb-4">GIB delivers the memes </h2>
+        <h2 className="text-4xl font-bold mb-4">GIB delivers the memes</h2>
         <p className="text-gray-400 max-w-xl mb-8">
           Submit your creations, explore the vault, and let GIB distribute the
           laughs to the world.
@@ -132,9 +167,24 @@ export default function Home() {
                     alt="meme"
                     className="w-full h-48 object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+
+                  {/* Like + Download Counters */}
+                  <div className="absolute bottom-2 left-2 flex gap-3 bg-black/60 px-3 py-1 rounded-lg text-sm z-20 pointer-events-auto">
                     <button
-                      onClick={() => handleDownload(meme.url)}
+                      onClick={() => handleLike(meme.id)}
+                      className={`flex items-center gap-1 transition ${
+                        meme.liked ? "text-red-400" : "hover:text-red-400"
+                      }`}
+                    >
+                      ❤️ {meme.likes}
+                    </button>
+                    <span className="flex items-center gap-1">⬇️ {meme.downloads}</span>
+                  </div>
+
+                  {/* Hover Download Overlay */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10">
+                    <button
+                      onClick={() => handleDownload(meme.id, meme.url)}
                       className="bg-white text-black text-sm px-3 py-1 rounded-lg shadow"
                     >
                       Claim Meme
@@ -151,7 +201,6 @@ export default function Home() {
           © {new Date().getFullYear()} GIB. All rights reserved.
         </p>
       </main>
-
       {/* Overlay */}
       {showOverlay && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -168,7 +217,6 @@ export default function Home() {
                 ✕
               </button>
             </div>
-
             {/* Meme grid */}
             <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-6">
               {memes.map((meme) => (
@@ -183,7 +231,7 @@ export default function Home() {
                   />
                   {showOverlay === "download" && (
                     <button
-                      onClick={() => handleDownload(meme.url)}
+                      onClick={() => handleDownload(meme.id, meme.url)}
                       className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       Claim Meme
@@ -192,7 +240,6 @@ export default function Home() {
                 </div>
               ))}
             </div>
-
             {/* Upload input */}
             {showOverlay === "submit" && (
               <div className="p-6 border-t border-gray-700 bg-gray-800/70">
@@ -201,7 +248,7 @@ export default function Home() {
                   multiple
                   accept="image/*,.gif"
                   onChange={handleUpload}
-                  className="block w-full text-sm text-gray-300 
+                  className="block w-full text-sm text-gray-300
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-lg file:border-0
                     file:text-sm file:font-semibold
