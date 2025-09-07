@@ -203,15 +203,15 @@ const scrollToFAQs = () => {
           <p className="text-gray-400">GIB has nothing for you right now 😔</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 bg-black/30 p-6 rounded-2xl shadow-xl">
-            {filteredMemes.map((meme) => (
+            {filteredMemes.slice(0, 4).map((meme) => (
               <div
                 key={meme.id}
-                className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl"
+                className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl flex items-center justify-center"
               >
                 <img
                   src={meme.url}
                   alt="meme"
-                  className="w-full h-48 object-cover"
+                  className="h-48 object-cover"
                 />
 
                 {/* Like + Download Counters */}
@@ -275,63 +275,62 @@ const scrollToFAQs = () => {
     </section>
 
     {showOverlay && (
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-        <div className="bg-gray-900/80 border border-gray-700 rounded-3xl shadow-2xl w-full max-w-5xl h-5/6 flex flex-col overflow-hidden">
-          {/* Header */}
-          <div className="flex justify-between items-center p-6 border-b border-gray-700">
-            <h2 className="text-2xl font-bold capitalize">
-              {showOverlay === "submit" ? "Submit to GIB" : "Claim from GIB"}
-            </h2>
-            <button
-              onClick={() => setShowOverlay(null)}
-              className="text-gray-400 hover:text-red-500 transition-colors text-2xl"
-            >
-              ✕
-            </button>
-          </div>
-          {/* Meme grid */}
-          <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-6">
-            {memes.map((meme) => (
-              <div
-                key={meme.id}
-                className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl"
-              >
-                <img
-                  src={meme.url}
-                  alt="meme"
-                  className="w-full h-full object-cover"
-                />
-                {showOverlay === "download" && (
-                  <button
-                    onClick={() => handleDownload(meme.id, meme.url)}
-                    className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    Claim Meme
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-          {/* Upload input */}
-          {showOverlay === "submit" && (
-            <div className="p-6 border-t border-gray-700 bg-gray-800/70">
-              <input
-                type="file"
-                multiple
-                accept="image/*,.gif"
-                onChange={handleUpload}
-                className="block w-full text-sm text-gray-300
-                  file:mr-4 file:py-2 file:px-4
-                  file:rounded-lg file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-blue-500 file:text-white
-                  hover:file:bg-blue-600 transition"
-              />
-            </div>
-          )}
-        </div>
+  <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div className="bg-gray-900/80 border border-gray-700 rounded-3xl shadow-2xl w-full max-w-5xl h-5/6 flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="flex justify-between items-center p-6 border-b border-gray-700">
+        <h2 className="text-2xl font-bold capitalize">
+          {showOverlay === "submit" ? "Submit to GIB" : "Claim from GIB"}
+        </h2>
+        <button
+          onClick={() => setShowOverlay(null)}
+          className="text-gray-400 hover:text-red-500 transition-colors text-2xl"
+        >
+          ✕
+        </button>
       </div>
-    )}
+
+      {/* Conditionally render content */}
+      {showOverlay === "download" && (
+        <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-6">
+          {memes.map((meme) => (
+            <div
+              key={meme.id}
+              className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl flex items-center justify-center"
+            >
+              <img
+                src={meme.url}
+                alt="meme"
+                className="h-40 object-cover"
+              />
+              <button
+                onClick={() => handleDownload(meme.id, meme.url)}
+                className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                Claim Meme
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showOverlay === "submit" && (
+        <div className="flex-1 flex items-center justify-center bg-gray-800/70 p-6 border-t border-gray-700">
+          <label className="cursor-pointer px-6 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-center font-semibold">
+            Choose Files
+            <input
+              type="file"
+              multiple
+              accept="image/*,.gif,.mp4"
+              onChange={handleUpload}
+              className="hidden" // hide the default input
+            />
+          </label>
+        </div>
+      )}
+    </div>
+  </div>
+)}
   </div>
   );
 }
