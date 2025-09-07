@@ -9,9 +9,13 @@ import GIBVaultReverse from "./components/vaultMarquee-reverse";
 export default function Home() {
   const [memes, setMemes] = useState([
     { id: 1, url: "/vault/gib-logo-open.png", likes: 0, downloads: 0, liked: false },
-    { id: 2, url: "/vault/gib-logo-open.png", likes: 0, downloads: 0, liked: false },
-    { id: 3, url: "/vault/gib-logo-open.png", likes: 0, downloads: 0, liked: false },
-    { id: 4, url: "/vault/gib-logo-open.png", likes: 0, downloads: 0, liked: false },
+    { id: 2, url: "/vault/gib-logo-default.png", likes: 0, downloads: 0, liked: false },
+    { id: 3, url: "/vault/gib-duck-chill.png", likes: 0, downloads: 0, liked: false },
+    { id: 4, url: "/vault/gib-frog-form.png", likes: 0, downloads: 0, liked: false },
+    { id: 5, url: "/vault/gib-in-car.png", likes: 0, downloads: 0, liked: false },
+    { id: 6, url: "/vault/gib-smoke.png", likes: 0, downloads: 0, liked: false },
+    { id: 7, url: "/vault/gib-wave.png", likes: 0, downloads: 0, liked: false },
+    { id: 8, url: "/vault/gib-yow.png", likes: 0, downloads: 0, liked: false },
   ]);
 
   const [showOverlay, setShowOverlay] = useState(null);
@@ -19,10 +23,21 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const trendingRef = useRef(null);
+  const vaultRef = useRef(null);
+  const faqsRef = useRef(null);
+
 
   const scrollToTrending = () => {
     trendingRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const scrollToVault = () => {
+  vaultRef.current?.scrollIntoView({ behavior: "smooth" });
+};
+
+const scrollToFAQs = () => {
+  faqsRef.current?.scrollIntoView({ behavior: "smooth" });
+};
 
   const handleUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -105,8 +120,8 @@ export default function Home() {
         </div>
         <nav className="mono flex gap-6 text-white font-medium">
           <button className="hover:text-white" onClick={scrollToTrending}>Trending</button>
-          <button className="hover:text-white">Categories</button>
-          <button className="hover:text-white">About GIB</button>
+          <button className="hover:text-white" onClick={scrollToVault}>Vault</button>
+          <button className="hover:text-white" onClick={scrollToFAQs}>FAQs</button>
         </nav>
       </header>
 
@@ -167,7 +182,7 @@ export default function Home() {
   </section>
 
     {/* Meme Grid */}
-    <section className="w-full max-w-6x pb-10" ref={trendingRef}
+    <section className="w-full max-w-6x pb-10"
       style={{
         backgroundImage: "url('/middle-wallpaper.png')",
         backgroundSize: "cover", 
@@ -181,7 +196,7 @@ export default function Home() {
       
       <Featured />
       <div className="mx-10">
-        <h3 className="text-2xl font-semibold mb-6 text-left white-glow">
+        <h3 className="text-2xl font-semibold mb-6 text-left white-glow" ref={trendingRef}>
           GIB’s Trending Vault
         </h3>
         {filteredMemes.length === 0 ? (
@@ -226,7 +241,7 @@ export default function Home() {
           </div>
         )}
           <div>
-            <h3 className="text-2xl font-semibold my-6 text-left white-glow">
+            <h3 className="text-2xl font-semibold my-6 text-left white-glow" ref={vaultRef}>
               Browse Vault
             </h3>
             <GIBVault />
@@ -251,7 +266,7 @@ export default function Home() {
       <div className="mx-10">
         <GIBVault />
       </div>
-      <div>
+      <div ref={faqsRef}>
         <FAQSection />
       </div>
       <p className="flex justify-center text-gray-500 text-sm mt-20 bg-black/60">
