@@ -3,6 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.mono {
+  font-family: var(--font-geist-mono), monospace;
 }
 
 @theme inline {
@@ -33,4 +38,35 @@ body {
 .animate-marquee {
   display: flex;
   animation: marquee 20s linear infinite;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  animation: marquee-reverse 20s linear infinite reverse;
+}
+
+@keyframes float {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); }
+  50%  { transform: translateY(-10px) translateX(6px) rotate(4deg); }
+  100% { transform: translateY(0) translateX(0) rotate(0deg); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite alternate;
+}
+
+.neon-glow {
+  text-shadow: 
+    0 0 5px #22c55e,
+    0 0 10px #22c55e,
+    0 0 20px #22c55e,
+    0 0 40px #16a34a,
+    0 0 80px #16a34a;
+}
+
+.white-glow {
+  text-shadow: 
+    0 0 3px rgba(255, 255, 255, 0.8),
+    0 0 8px rgba(255, 255, 255, 0.6),
+    0 0 15px rgba(255, 255, 255, 0.4);
 }

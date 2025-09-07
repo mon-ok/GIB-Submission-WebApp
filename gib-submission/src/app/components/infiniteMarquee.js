@@ -8,11 +8,11 @@ export default function Featured() {
   ];
 
   return (
-    <section className="bg-gradient-to-b from-green to-yellow-200 py-10 mb-10">
-      <h2 className="text-center text-white font-semibold mb-6 text-2xl">
+    <section className="relative py-10 mb-10">
+      {/* <div className="absolute inset-0 bg-purple-500/20 pointer-events-none" /> */}
+      <h2 className="mono text-center font-bold mb-6 text-2xl">
         FEATURED IN
       </h2>
-
       <div className="overflow-hidden relative">
         <div className="flex animate-marquee whitespace-nowrap">
           {logos.map((logo, idx) => (

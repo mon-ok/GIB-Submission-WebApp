@@ -2,13 +2,16 @@
 
 import { useState, useRef } from "react";
 import Featured from "./components/infiniteMarquee";
+import FAQSection from "./components/faqs";
+import GIBVault from "./components/vaultMarquee";
+import GIBVaultReverse from "./components/vaultMarquee-reverse";
 
 export default function Home() {
   const [memes, setMemes] = useState([
-    { id: 1, url: "https://i.imgur.com/abcd123.jpg", category: "funny", likes: 0, downloads: 0, liked: false },
-    { id: 2, url: "https://i.imgur.com/efgh456.gif", category: "animals", likes: 0, downloads: 0, liked: false },
-    { id: 3, url: "https://placekitten.com/300/200", category: "animals", likes: 0, downloads: 0, liked: false },
-    { id: 4, url: "https://placekitten.com/301/200", category: "gaming", likes: 0, downloads: 0, liked: false },
+    { id: 1, url: "/vault/gib-logo-open.png", likes: 0, downloads: 0, liked: false },
+    { id: 2, url: "/vault/gib-logo-open.png", likes: 0, downloads: 0, liked: false },
+    { id: 3, url: "/vault/gib-logo-open.png", likes: 0, downloads: 0, liked: false },
+    { id: 4, url: "/vault/gib-logo-open.png", likes: 0, downloads: 0, liked: false },
   ]);
 
   const [showOverlay, setShowOverlay] = useState(null);
@@ -35,29 +38,19 @@ export default function Home() {
   };
 
   const handleDownload = (id, url) => {
-    // Increment download count
     setMemes((prev) =>
       prev.map((meme) =>
         meme.id === id ? { ...meme, downloads: meme.downloads + 1 } : meme
       )
     );
 
-    // Detect file extension from URL
-    const urlObj = new URL(url);
-    const pathname = urlObj.pathname;
-    let ext = pathname.substring(pathname.lastIndexOf(".") + 1).toLowerCase();
-
-    // Fallback if no extension in URL
-    if (!ext || ext.length > 5) ext = "jpg";
-
-    // Create a descriptive filename
-    const fileName = `gib-meme-${id}.${ext}`;
-
     // Trigger actual download
     const link = document.createElement("a");
     link.href = url;
-    link.download = fileName;
+    link.download = url.split("/").pop();
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   };
 
   const handleLike = (id) => {
@@ -87,179 +80,243 @@ export default function Home() {
   const categories = ["all", "funny", "animals", "gaming", "uncategorized"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex flex-col">
+    <div className="relative min-h-screen text-white flex flex-col">
+      <section
+        className="relative"
+        style={{
+          backgroundImage: "url('/top-wallpaper.png')",
+          backgroundSize: "cover", 
+          // backgroundPosition: "center", 
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+      {/* Optional dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/20 z-0"></div>
+
+      {/* Content */}
+    <div className="relative z-10 flex flex-col flex-1 mx-10">
       {/* Top Taskbar */}
       <header className="flex justify-between items-center px-8 py-4 border-b border-gray-800">
-        <h1 className="font-mono text-3xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-500 text-transparent bg-clip-text">
-          GIB HUB
-        </h1>
-        <nav className="flex gap-6 text-gray-300">
+        <div className="flex items-center">
+          <img src="/LOGO.png" alt="GIB Logo" className="h-10 inline-block mr-3 animate-float" />
+          <h1 className="font-mono text-3xl font-extrabold text-green-500 neon-glow">
+            GIB HUB
+          </h1>
+        </div>
+        <nav className="mono flex gap-6 text-white font-medium">
           <button className="hover:text-white" onClick={scrollToTrending}>Trending</button>
           <button className="hover:text-white">Categories</button>
           <button className="hover:text-white">About GIB</button>
         </nav>
       </header>
 
-      {/* Hero Section */}
-      <main className="flex flex-col items-center text-center mt-12 px-6 pb-16">
+      {/* Intro Text */}
+      <div className="flex items-center mt-16 flex-col text-center">
         <h2 className="text-4xl font-bold mb-4">GIB delivers the memes</h2>
-        <p className="text-gray-400 max-w-xl mb-8">
+        <p className="text-gray-400 max-w-xl">
           Submit your creations, explore the vault, and let GIB distribute the
           laughs to the world.
         </p>
+      </div>
 
-        {/* Buttons */}
-        <div className="flex gap-6 mb-12">
-          <button
-            onClick={() => setShowOverlay("submit")}
-            className="px-6 py-3 rounded-xl shadow-lg bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105"
-          >
-            Submit to GIB
-          </button>
-          <button
-            onClick={() => setShowOverlay("download")}
-            className="px-6 py-3 rounded-xl shadow-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105"
-          >
-            Claim from GIB
-          </button>
+      {/* Hero Section */}
+      <main className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-12 px-6 pb-16 items-center">
+        {/* Left Column: Text */}
+        <div className="">
+          <h1 className="text-5xl font-extrabold mb-6 white-glow">LIVE, LAUGH, GIB.</h1>
         </div>
 
-        <Featured />
-
-        {/* Search + Filter */}
-        <div className="flex flex-col sm:flex-row gap-4 items-center mb-10 w-full max-w-4xl">
-          <input
-            type="text"
-            placeholder="Search the GIB vault..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 px-4 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        {/* Right Column: Buttons */}
+        <div className="flex flex-col gap-6 px-4 py-14 border border-indigo-950 bg-indigo-400/10">
+          <img
+            src="/GIBNG.png"
+            alt="Sticker"
+            className="absolute top-45 -right-10 w-40 h-40"
           />
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="p-6 rounded-2xl bg-gray-900/70 shadow-xl border border-gray-800 hover:border-purple-500 transition">
+            <button
+              onClick={() => setShowOverlay("submit")}
+              className="mono w-full px-6 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 
+                        hover:from-blue-600 hover:to-indigo-700 
+                        transition-all duration-300 transform hover:scale-105 font-semibold"
+            >
+              Submit to GIB
+            </button>
+          </div>
 
-        {/* Meme Grid */}
-        <section className="w-full max-w-6xl" ref={trendingRef}>
-          <h3 className="text-2xl font-semibold mb-6 text-left">
-            GIB’s Trending Vault
-          </h3>
-          {filteredMemes.length === 0 ? (
-            <p className="text-gray-400">GIB has nothing for you right now 😔</p>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-              {filteredMemes.map((meme) => (
-                <div
-                  key={meme.id}
-                  className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl"
-                >
-                  <img
-                    src={meme.url}
-                    alt="meme"
-                    className="w-full h-48 object-cover"
-                  />
+          <div className="mono">
+            Submit your GIB-related memes and GIFs. GIB will distribute them to the world.
+          </div>
 
-                  {/* Like + Download Counters */}
-                  <div className="absolute bottom-2 left-2 flex gap-3 bg-black/60 px-3 py-1 rounded-lg text-sm z-20 pointer-events-auto">
-                    <button
-                      onClick={() => handleLike(meme.id)}
-                      className={`flex items-center gap-1 transition ${
-                        meme.liked ? "text-red-400" : "hover:text-red-400"
-                      }`}
-                    >
-                      ❤️ {meme.likes}
-                    </button>
-                    <span className="flex items-center gap-1">⬇️ {meme.downloads}</span>
-                  </div>
-
-                  {/* Hover Download Overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10">
-                    <button
-                      onClick={() => handleDownload(meme.id, meme.url)}
-                      className="bg-white text-black text-sm px-3 py-1 rounded-lg shadow"
-                    >
-                      Claim Meme
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* Bottom Rights Reserved */}
-        <p className="text-gray-500 text-sm mt-20">
-          © {new Date().getFullYear()} GIB. All rights reserved.
-        </p>
-      </main>
-      {/* Overlay */}
-      {showOverlay && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900/80 border border-gray-700 rounded-3xl shadow-2xl w-full max-w-5xl h-5/6 flex flex-col overflow-hidden">
-            {/* Header */}
-            <div className="flex justify-between items-center p-6 border-b border-gray-700">
-              <h2 className="text-2xl font-bold capitalize">
-                {showOverlay === "submit" ? "Submit to GIB" : "Claim from GIB"}
-              </h2>
-              <button
-                onClick={() => setShowOverlay(null)}
-                className="text-gray-400 hover:text-red-500 transition-colors text-2xl"
-              >
-                ✕
-              </button>
-            </div>
-            {/* Meme grid */}
-            <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-6">
-              {memes.map((meme) => (
-                <div
-                  key={meme.id}
-                  className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl"
-                >
-                  <img
-                    src={meme.url}
-                    alt="meme"
-                    className="w-full h-full object-cover"
-                  />
-                  {showOverlay === "download" && (
-                    <button
-                      onClick={() => handleDownload(meme.id, meme.url)}
-                      className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      Claim Meme
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-            {/* Upload input */}
-            {showOverlay === "submit" && (
-              <div className="p-6 border-t border-gray-700 bg-gray-800/70">
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*,.gif"
-                  onChange={handleUpload}
-                  className="block w-full text-sm text-gray-300
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-lg file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-blue-500 file:text-white
-                    hover:file:bg-blue-600 transition"
-                />
-              </div>
-            )}
+          <div className="p-6 rounded-2xl bg-gray-900/70 shadow-xl border border-gray-800 hover:border-green-500 transition">
+            <button
+              onClick={() => setShowOverlay("download")}
+              className="mono w-full px-6 py-4 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 
+                        hover:from-green-600 hover:to-emerald-700 
+                        transition-all duration-300 transform hover:scale-105 font-semibold"
+            >
+              Claim from GIB
+            </button>
+          </div>
+          <div className="mono">
+            Want something from GIB? Browse the vault and claim your favorite memes.
           </div>
         </div>
-      )}
+      </main>
     </div>
+  </section>
+
+    {/* Meme Grid */}
+    <section className="w-full max-w-6x pb-10" ref={trendingRef}
+      style={{
+        backgroundImage: "url('/middle-wallpaper.png')",
+        backgroundSize: "cover", 
+        // backgroundPosition: "center", 
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+  
+      {/* Optional dark overlay for readability */}
+      {/* <div className="absolute inset-0 bg-black/50 z-0"></div> */}
+      
+      <Featured />
+      <div className="mx-10">
+        <h3 className="text-2xl font-semibold mb-6 text-left white-glow">
+          GIB’s Trending Vault
+        </h3>
+        {filteredMemes.length === 0 ? (
+          <p className="text-gray-400">GIB has nothing for you right now 😔</p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 bg-black/30 p-6 rounded-2xl shadow-xl">
+            {filteredMemes.map((meme) => (
+              <div
+                key={meme.id}
+                className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl"
+              >
+                <img
+                  src={meme.url}
+                  alt="meme"
+                  className="w-full h-48 object-cover"
+                />
+
+                {/* Like + Download Counters */}
+                <div className="absolute bottom-2 left-2 flex gap-3 bg-black/60 px-3 py-1 rounded-lg text-sm z-20 pointer-events-auto">
+                  <button
+                    onClick={() => handleLike(meme.id)}
+                    className={`flex items-center gap-1 transition ${
+                      meme.liked ? "text-red-400" : "hover:text-red-400"
+                    }`}
+                  >
+                    ❤️ {meme.likes}
+                  </button>
+                  <span className="flex items-center gap-1">⬇️ {meme.downloads}</span>
+                </div>
+
+                {/* Hover Download Overlay */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10">
+                  <button
+                    onClick={() => handleDownload(meme.id, meme.url)}
+                    className="bg-white text-black text-sm px-3 py-1 rounded-lg shadow"
+                  >
+                    Claim Meme
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+          <div>
+            <h3 className="text-2xl font-semibold my-6 text-left white-glow">
+              Browse Vault
+            </h3>
+            <GIBVault />
+          </div>
+        </div>
+    </section>
+
+    {/* FAQs */}
+    <section 
+      className=""
+      style=
+        {{
+          backgroundImage: "url('/bottom-wallpaper.png')",
+          backgroundSize: "cover", 
+          // backgroundPosition: "center", 
+          backgroundRepeat: "no-repeat",
+        }}
+        >
+      <div className="mx-10 -mt-10">
+        <GIBVaultReverse />
+      </div>
+      <div className="mx-10">
+        <GIBVault />
+      </div>
+      <div>
+        <FAQSection />
+      </div>
+      <p className="flex justify-center text-gray-500 text-sm mt-20 bg-black/60">
+        © {new Date().getFullYear()} GIB. All rights reserved.
+      </p>
+    </section>
+
+    {showOverlay && (
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-900/80 border border-gray-700 rounded-3xl shadow-2xl w-full max-w-5xl h-5/6 flex flex-col overflow-hidden">
+          {/* Header */}
+          <div className="flex justify-between items-center p-6 border-b border-gray-700">
+            <h2 className="text-2xl font-bold capitalize">
+              {showOverlay === "submit" ? "Submit to GIB" : "Claim from GIB"}
+            </h2>
+            <button
+              onClick={() => setShowOverlay(null)}
+              className="text-gray-400 hover:text-red-500 transition-colors text-2xl"
+            >
+              ✕
+            </button>
+          </div>
+          {/* Meme grid */}
+          <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-6">
+            {memes.map((meme) => (
+              <div
+                key={meme.id}
+                className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl"
+              >
+                <img
+                  src={meme.url}
+                  alt="meme"
+                  className="w-full h-full object-cover"
+                />
+                {showOverlay === "download" && (
+                  <button
+                    onClick={() => handleDownload(meme.id, meme.url)}
+                    className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    Claim Meme
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          {/* Upload input */}
+          {showOverlay === "submit" && (
+            <div className="p-6 border-t border-gray-700 bg-gray-800/70">
+              <input
+                type="file"
+                multiple
+                accept="image/*,.gif"
+                onChange={handleUpload}
+                className="block w-full text-sm text-gray-300
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-lg file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-blue-500 file:text-white
+                  hover:file:bg-blue-600 transition"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
   );
 }
