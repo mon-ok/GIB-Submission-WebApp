@@ -5,23 +5,33 @@ export default function FAQSection() {
     {
       question: "What is GIB HUB?",
       answer:
-        "GIB HUB is a meme distribution platform where you can submit, explore, and download memes."
+        "GIB HUB is a meme distribution platform where you can submit, explore, and download memes.",
     },
     {
       question: "How do I submit a meme?",
       answer:
-        "Click on the 'Submit to GIB' button, upload your file, and fill in the required details."
+        "Click on the 'Submit to GIB' button, upload your file, and fill in the required details. Submit it with a dedicated name so we can reach out if needed.",
     },
     {
       question: "Is GIB HUB free to use?",
       answer:
-        "Yes! All core features are completely free. We believe memes should be shared without barriers."
+        "Yes! All core features are completely free. We believe memes should be shared without barriers.",
     },
     {
-      question: "How does the trending section work?",
+      question: "Do I need an account?",
       answer:
-        "Memes are sorted by likes. The more likes a meme has, the higher it appears in the trending section."
-    }
+        "No account is required to browse or download. However, it's recommended for you to have a dedicated name when submitting so we know how to reach out.",
+    },
+    {
+      question: "What file formats are supported?",
+      answer:
+        "You can upload PNG, JPG, GIF, and MP4 files. Maximum file size is 10MB per upload.",
+    },
+    {
+      question: "Is there a limit to how many memes I can upload?",
+      answer:
+        "No strict limit — just keep it respectful. Spam or inappropriate content will be removed.",
+    },
   ];
 
    const [openIndex, setOpenIndex] = useState(null);

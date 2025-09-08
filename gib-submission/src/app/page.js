@@ -9,28 +9,20 @@ import GIBVaultReverse from "./components/vaultMarquee-reverse";
 
 export default function Home() {
   const [memes, setMemes] = useState([
-    { id: 1, url: "/vault/gib-logo-open.png", likes: 0, downloads: 0, liked: false },
-    { id: 2, url: "/vault/gib-logo-default.png", likes: 0, downloads: 0, liked: false },
-    { id: 3, url: "/vault/gib-duck-chill.png", likes: 0, downloads: 0, liked: false },
-    { id: 4, url: "/vault/gib-frog-form.png", likes: 0, downloads: 0, liked: false },
-    { id: 5, url: "/vault/gib-in-car.png", likes: 0, downloads: 0, liked: false },
-    { id: 6, url: "/vault/gib-smoke.png", likes: 0, downloads: 0, liked: false },
-    { id: 7, url: "/vault/gib-wave.png", likes: 0, downloads: 0, liked: false },
-    { id: 8, url: "/vault/gib-yow.png", likes: 0, downloads: 0, liked: false },
+    { id: 1, url: "/vault/gib-logo-open.png" },
+    { id: 2, url: "/vault/gib-logo-default.png" },
+    { id: 3, url: "/vault/gib-duck-chill.png" },
+    { id: 4, url: "/vault/gib-frog-form.png" },
+    { id: 5, url: "/vault/gib-in-car.png" },
+    { id: 6, url: "/vault/gib-smoke.png" },
+    { id: 7, url: "/vault/gib-wave.png" },
+    { id: 8, url: "/vault/gib-yow.png" },
   ]);
 
   const [showOverlay, setShowOverlay] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const trendingRef = useRef(null);
   const vaultRef = useRef(null);
   const faqsRef = useRef(null);
-
-
-  const scrollToTrending = () => {
-    trendingRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   const scrollToVault = () => {
   vaultRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -68,30 +60,6 @@ const scrollToFAQs = () => {
     document.body.removeChild(link);
   };
 
-  const handleLike = (id) => {
-    setMemes((prev) =>
-      prev.map((meme) =>
-        meme.id === id 
-          ? { 
-            ...meme, 
-            likes: meme.liked ? meme.likes - 1 : meme.likes + 1,
-            liked: !meme.liked, 
-            } 
-          : meme
-      )
-    );
-  };
-
-  // Apply search + category filtering
-  const filteredMemes = memes.filter((meme) => {
-    const matchesSearch = meme.url
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "all" || meme.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
   return (
     <div className="relative min-h-screen text-white flex flex-col">
       <section
@@ -120,8 +88,9 @@ const scrollToFAQs = () => {
           <Link href="/roadmap" className="hover:text-white">
             Roadmap
           </Link>
-          <button className="hover:text-white" onClick={scrollToTrending}>Trending</button>
-          <button className="hover:text-white" onClick={scrollToVault}>Vault</button>
+          <Link href="/vault" className="hover:text-white">
+            Vault
+          </Link>
           <button className="hover:text-white" onClick={scrollToFAQs}>FAQs</button>
         </nav>
       </header>
@@ -182,7 +151,6 @@ const scrollToFAQs = () => {
     </div>
   </section>
 
-    {/* Meme Grid */}
     <section className="w-full max-w-6x pb-10"
       style={{
         backgroundImage: "url('/middle-wallpaper.png')",
@@ -197,57 +165,44 @@ const scrollToFAQs = () => {
       
       <Featured />
       <div className="mx-10">
-        <h3 className="text-2xl font-semibold mb-6 text-left white-glow" ref={trendingRef}>
-          GIB’s Trending Vault
-        </h3>
-        {filteredMemes.length === 0 ? (
-          <p className="text-gray-400">GIB has nothing for you right now 😔</p>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 bg-black/30 p-6 rounded-2xl shadow-xl">
-            {filteredMemes.slice(0, 4).map((meme) => (
-              <div
-                key={meme.id}
-                className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl flex items-center justify-center"
-              >
-                <img
-                  src={meme.url}
-                  alt="meme"
-                  className="h-48 object-cover"
-                />
+        <div className="flex justify-center items-center flex-col">
+          <h3 className="text-5xl font-extrabold my-6 text-left white-glow" ref={vaultRef}>
+            BROWSE THE VAULT
+          </h3>
+          <h3 className="mono font-semibold mb-20 text-left" ref={vaultRef}>
+            View our curated collection of GIB memes and media. Download, and submit your own!
+          </h3>
+        </div>
 
-                {/* Like + Download Counters */}
-                <div className="absolute bottom-2 left-2 flex gap-3 bg-black/60 px-3 py-1 rounded-lg text-sm z-20 pointer-events-auto">
-                  <button
-                    onClick={() => handleLike(meme.id)}
-                    className={`flex items-center gap-1 transition ${
-                      meme.liked ? "text-red-400" : "hover:text-red-400"
-                    }`}
-                  >
-                    ❤️ {meme.likes}
-                  </button>
-                  <span className="flex items-center gap-1">⬇️ {meme.downloads}</span>
-                </div>
-
-                {/* Hover Download Overlay */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10">
-                  <button
-                    onClick={() => handleDownload(meme.id, meme.url)}
-                    className="bg-white text-black text-sm px-3 py-1 rounded-lg shadow"
-                  >
-                    Claim Meme
-                  </button>
-                </div>
-              </div>
-            ))}
+        <div className="flex justify-center gap-140 mb-16">
+          <div className="w-58 h-24 bg-white rounded-[2rem] flex items-center justify-center 
+                          text-black text-center p-4 mono font-bold 
+                          shadow-[8px_8px_0px_rgba(0,0,0,0.8)] 
+                          hover:translate-y-[-4px] hover:translate-x-[-4px] 
+                          transition-transform duration-200 opacity-80">
+            Submit Your Own Memes
           </div>
-        )}
-          <div>
-            <h3 className="text-2xl font-semibold my-6 text-left white-glow" ref={vaultRef}>
-              Browse Vault
-            </h3>
-            <GIBVault />
+
+          <div className="w-58 h-24 bg-white rounded-[2rem] flex items-center justify-center 
+                          text-black text-center p-4 mono font-bold 
+                          shadow-[8px_8px_0px_rgba(0,0,0,0.8)] 
+                          hover:translate-y-[-4px] hover:translate-x-[-4px] 
+                          transition-transform duration-200 opacity-80">
+            Download Curated Media
           </div>
         </div>
+
+        <div className="flex justify-center mb-36">
+          <Link
+            href="/vault"
+            className="mono px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600
+                      hover:from-purple-600 hover:to-indigo-700 
+                      transition-all duration-300 transform hover:scale-105 font-semibold shadow-lg"
+          >
+            ✦ Browse the Vault
+          </Link>
+        </div>
+      </div>
     </section>
 
     {/* FAQs */}
@@ -261,12 +216,6 @@ const scrollToFAQs = () => {
           backgroundRepeat: "no-repeat",
         }}
         >
-      <div className="mx-10 -mt-10">
-        <GIBVaultReverse />
-      </div>
-      <div className="mx-10">
-        <GIBVault />
-      </div>
       <div ref={faqsRef}>
         <FAQSection />
       </div>
@@ -293,25 +242,35 @@ const scrollToFAQs = () => {
 
       {/* Conditionally render content */}
       {showOverlay === "download" && (
-        <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-6">
-          {memes.map((meme) => (
-            <div
-              key={meme.id}
-              className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl flex items-center justify-center"
-            >
-              <img
-                src={meme.url}
-                alt="meme"
-                className="h-40 object-cover"
-              />
-              <button
-                onClick={() => handleDownload(meme.id, meme.url)}
-                className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
+        <div className="flex-1 relative overflow-y-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-6">
+            {memes.map((meme) => (
+              <div
+                key={meme.id}
+                className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl flex items-center justify-center"
               >
-                Claim Meme
-              </button>
-            </div>
-          ))}
+                <img
+                  src={meme.url}
+                  alt="meme"
+                  className="h-40 object-cover"
+                />
+                <button
+                  onClick={() => handleDownload(meme.id, meme.url)}
+                  className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  Download
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="sticky bottom-4 flex justify-end pr-6">
+            <Link
+              href="/vault"
+              className="px-5 py-2 rounded-xl bg-purple-600 text-white font-semibold shadow-lg hover:bg-purple-700 transition-all transform hover:scale-105"
+            >
+              View More ➜
+            </Link>
+          </div>
         </div>
       )}
 

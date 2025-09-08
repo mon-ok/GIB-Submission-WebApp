@@ -8,7 +8,7 @@ export default function Featured() {
   ];
 
   return (
-    <section className="relative py-10 mb-10">
+    <section className="relative pt-10 mb-8">
       {/* <div className="absolute inset-0 bg-purple-500/20 pointer-events-none" /> */}
       <h2 className="mono text-center font-bold mb-6 text-2xl">
         FEATURED IN

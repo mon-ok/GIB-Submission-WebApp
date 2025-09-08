@@ -1,4 +1,4 @@
-"use client"; // make sure this is a client component
+"use client";
 
 import { useEffect, useState } from "react";
 
