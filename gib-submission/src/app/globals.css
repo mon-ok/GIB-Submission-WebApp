@@ -42,7 +42,7 @@ body {
 
 .animate-marquee-reverse {
   display: flex;
-  animation: marquee-reverse 20s linear infinite reverse;
+  animation: marquee 20s linear infinite reverse;
 }
 
 @keyframes float {
