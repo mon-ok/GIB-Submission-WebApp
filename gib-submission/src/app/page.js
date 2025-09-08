@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Link from "next/link"
 import Featured from "./components/infiniteMarquee";
 import FAQSection from "./components/faqs";
 import GIBVault from "./components/vaultMarquee";
@@ -44,7 +45,6 @@ const scrollToFAQs = () => {
     const newMemes = files.map((file, index) => ({
       id: memes.length + index + 1,
       url: URL.createObjectURL(file),
-      category: "uncategorized",
       likes: 0,
       downloads: 0,
     }));
@@ -92,8 +92,6 @@ const scrollToFAQs = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const categories = ["all", "funny", "animals", "gaming", "uncategorized"];
-
   return (
     <div className="relative min-h-screen text-white flex flex-col">
       <section
@@ -119,6 +117,9 @@ const scrollToFAQs = () => {
           </h1>
         </div>
         <nav className="mono flex gap-6 text-white font-medium">
+          <Link href="/roadmap" className="hover:text-white">
+            Roadmap
+          </Link>
           <button className="hover:text-white" onClick={scrollToTrending}>Trending</button>
           <button className="hover:text-white" onClick={scrollToVault}>Vault</button>
           <button className="hover:text-white" onClick={scrollToFAQs}>FAQs</button>
