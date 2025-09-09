@@ -19,7 +19,7 @@ export default function Roadmap() {
       <motion.img
         src="/vault/gib-allnighter.png"
         alt="Gib Allnighter"
-        className="absolute top-8 right-28 w-40 z-100"
+        className="hidden md:block absolute top-8 right-28 w-40 z-100"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, delay: 1.5, ease: "easeOut" }}

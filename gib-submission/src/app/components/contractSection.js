@@ -14,9 +14,9 @@ export default function ContractSection() {
   };
 
   return (
-    <div className="flex flex-col justify-around items-center gap-50 relative">
+    <div className="flex flex-col justify-around items-center gap-6 sm:gap-50 relative">
       {/* Title */}
-      <h1 className="text-5xl font-extrabold white-glow mt-4">LIVE, LAUGH, GIB.</h1>
+      <h1 className="whitespace-nowrap text-3xl sm:text-5xl font-extrabold white-glow mt-4">LIVE, LAUGH, GIB.</h1>
 
       {/* Contract Address with Copy */}
       <div className="flex flex-col items-center">

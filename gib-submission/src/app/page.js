@@ -21,6 +21,7 @@ export default function Home() {
   ]);
 
   const [showOverlay, setShowOverlay] = useState(null);
+  const [navOpen, setNavOpen] = useState(false);
 
   const vaultRef = useRef(null);
   const faqsRef = useRef(null);
@@ -68,25 +69,37 @@ export default function Home() {
         style={{
           backgroundImage: "url('/top-wallpaper.png')",
           backgroundSize: "cover",
+          backgroundPosition: "20% 0",
           backgroundRepeat: "no-repeat",
         }}
       >
         <div className="absolute inset-0 bg-black/20 z-0"></div>
 
-        <div className="relative z-10 flex flex-col flex-1 mx-4 sm:mx-10">
+        <div className="relative z-10 flex flex-col flex-1 mx-2 sm:mx-10">
           {/* Header */}
-          <header className="flex flex-col sm:flex-row justify-between items-center px-4 sm:px-8 py-4 border-b border-gray-800 gap-4 sm:gap-0">
+          <header className="flex justify-between items-center px-2 sm:px-8 py-4 border-b border-gray-800 gap-4 sm:gap-0">
             <div className="flex items-center">
               <img
                 src="/LOGO.png"
                 alt="GIB Logo"
-                className="h-10 inline-block mr-3 animate-float"
+                className="h-8 sm:h-10 inline-block mr-2 sm:mr-3 animate-float"
               />
-              <h1 className="font-mono text-2xl sm:text-3xl font-extrabold text-green-500 neon-glow">
+              <h1 className="font-mono text-xl sm:text-3xl font-extrabold text-green-500 neon-glow">
                 GIB HUB
               </h1>
             </div>
-            <nav className="mono flex flex-col sm:flex-row gap-3 sm:gap-6 text-white font-medium">
+            {/* Hamburger button for mobile */}
+            <button
+              className="sm:hidden flex flex-col justify-center items-center w-10 h-10"
+              onClick={() => setNavOpen((v) => !v)}
+              aria-label="Open navigation"
+            >
+              <span className={`block w-6 h-0.5 bg-white mb-1 transition-all ${navOpen ? "rotate-45 translate-y-2" : ""}`}></span>
+              <span className={`block w-6 h-0.5 bg-white mb-1 transition-all ${navOpen ? "opacity-0" : ""}`}></span>
+              <span className={`block w-6 h-0.5 bg-white transition-all ${navOpen ? "-rotate-45 -translate-y-2" : ""}`}></span>
+            </button>
+            {/* Desktop nav */}
+            <nav className="mono hidden sm:flex gap-2 sm:gap-6 text-white font-medium">
               <Link href="/roadmap" className="hover:text-white">
                 Roadmap
               </Link>
@@ -98,54 +111,82 @@ export default function Home() {
               </button>
             </nav>
           </header>
+          {/* Mobile nav dropdown */}
+          {navOpen && (
+            <nav className="sm:hidden flex flex-col gap-4 bg-gray-900/95 border border-gray-800 rounded-xl mt-2 px-4 py-4 absolute right-2 top-20 z-20 shadow-lg animate-fade-in">
+              <Link
+                href="/roadmap"
+                className="hover:text-green-400 font-medium"
+                onClick={() => setNavOpen(false)}
+              >
+                Roadmap
+              </Link>
+              <Link
+                href="/vault"
+                className="hover:text-green-400 font-medium"
+                onClick={() => setNavOpen(false)}
+              >
+                Vault
+              </Link>
+              <button
+                className="hover:text-green-400 font-medium text-left"
+                onClick={() => {
+                  setNavOpen(false);
+                  scrollToFAQs();
+                }}
+              >
+                FAQs
+              </button>
+            </nav>
+          )}
 
           {/* Intro */}
-          <div className="flex items-center mt-10 sm:mt-16 flex-col text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+          <div className="flex items-center mt-6 sm:mt-16 flex-col text-center">
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4">
               GIB delivers the memes
             </h2>
-            <p className="text-gray-400 max-w-xl px-2 sm:px-0">
+            <p className="text-gray-400 max-w-xs sm:max-w-xl px-2 sm:px-0 text-sm sm:text-base">
               Submit your creations, explore the vault, and let GIB distribute
               the laughs to the world.
             </p>
           </div>
 
           {/* Hero Section */}
-          <main className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mt-8 md:mt-12 px-2 sm:px-6 pb-16">
+          <main className="grid grid-cols-1 md:grid-cols-2 gap-36 md:gap-10 mt-6 md:mt-12 px-0 sm:px-6 pb-10 sm:pb-16">
             <ContractSection />
-            <div className="flex flex-col gap-6 px-4 py-10 sm:py-14 border border-indigo-950 bg-indigo-400/10 relative">
+            <div className="flex flex-col gap-4 sm:gap-6 px-2 sm:px-4 py-6 sm:py-14 border border-indigo-950 bg-indigo-400/10 relative rounded-xl">
               <img
                 src="/GIBNG.png"
                 alt="Sticker"
-                className="absolute top-5 sm:top-10 right-2 sm:-right-10 w-24 sm:w-40 h-24 sm:h-40"
+                className="absolute sm:-top-24 right-2 sm:-right-10 w-16 sm:w-40 h-16 sm:h-40"
               />
-              <div className="p-4 sm:p-6 rounded-2xl bg-gray-900/70 shadow-xl border border-gray-800 hover:border-purple-500 transition">
+              <div className="p-3 sm:p-6 rounded-2xl bg-gray-900/70 shadow-xl border border-gray-800 hover:border-purple-500 transition">
                 <button
                   onClick={() => setShowOverlay("submit")}
-                  className="mono w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 
+                  className="mono w-full px-3 sm:px-6 py-2 sm:py-4 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 
                             hover:from-blue-600 hover:to-indigo-700 
-                            transition-all duration-300 transform hover:scale-105 font-semibold"
+                            transition-all duration-300 transform hover:scale-105 font-semibold text-sm sm:text-base"
                 >
                   Submit to GIB
                 </button>
               </div>
 
-              <div className="mono text-sm sm:text-base">
+              <div className="mono text-xs sm:text-base">
                 Submit your GIB-related memes and GIFs. GIB will distribute them
                 to the world.
               </div>
 
-              <div className="p-4 sm:p-6 rounded-2xl bg-gray-900/70 shadow-xl border border-gray-800 hover:border-green-500 transition">
+              <div className="p-3 sm:p-6 rounded-2xl bg-gray-900/70 shadow-xl border border-gray-800 hover:border-green-500 transition">
                 <button
                   onClick={() => setShowOverlay("download")}
-                  className="mono w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 
+                  className="mono w-full px-3 sm:px-6 py-2 sm:py-4 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 
                             hover:from-green-600 hover:to-emerald-700 
-                            transition-all duration-300 transform hover:scale-105 font-semibold"
+                            transition-all duration-300 transform hover:scale-105 font-semibold text-sm sm:text-base"
                 >
                   Claim from GIB
                 </button>
               </div>
-              <div className="mono text-sm sm:text-base">
+              <div className="mono text-xs sm:text-base">
                 Want something from GIB? Browse the vault and claim your
                 favorite memes.
               </div>
@@ -156,24 +197,25 @@ export default function Home() {
 
       {/* Middle Section */}
       <section
-        className="w-full pb-10"
+        className="w-full pb-6 sm:pb-10"
         style={{
           backgroundImage: "url('/middle-wallpaper.png')",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
+          backgroundPosition: "50% 50%",
         }}
       >
         <Featured />
-        <div className="mx-4 sm:mx-10">
+        <div className="mx-2 sm:mx-10">
           <div className="flex justify-center items-center flex-col text-center">
             <h3
-              className="text-3xl sm:text-4xl md:text-5xl font-extrabold my-6 white-glow"
+              className="text-2xl sm:text-4xl md:text-5xl font-extrabold my-4 sm:my-6 white-glow"
               ref={vaultRef}
             >
               BROWSE THE VAULT
             </h3>
             <h3
-              className="mono font-semibold mb-12 sm:mb-20 text-sm sm:text-base"
+              className="mono font-semibold mb-8 sm:mb-20 text-xs sm:text-base"
               ref={vaultRef}
             >
               View our curated collection of GIB memes and media. Download, and
@@ -181,30 +223,30 @@ export default function Home() {
             </h3>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-20 mb-12 sm:mb-16">
-            <div className="w-full sm:w-56 h-20 sm:h-24 bg-white rounded-[2rem] flex items-center justify-center 
-                            text-black text-center p-4 mono font-bold 
+          <div className="grid grid-cols-2 place-items-center sm:flex sm:flex-row sm:justify-center gap-4 sm:gap-100 mb-8 sm:mb-16">
+            <div className="w-32 sm:w-56 h-16 sm:h-24 bg-white rounded-[2rem] flex items-center justify-center 
+                            text-black text-center p-2 sm:p-4 mono font-bold 
                             shadow-[6px_6px_0px_rgba(0,0,0,0.8)] 
                             hover:translate-y-[-4px] hover:translate-x-[-4px] 
-                            transition-transform duration-200 opacity-80 text-sm sm:text-base">
+                            transition-transform duration-200 opacity-80 text-xs sm:text-base">
               Submit Your Own Memes
             </div>
 
-            <div className="w-full sm:w-56 h-20 sm:h-24 bg-white rounded-[2rem] flex items-center justify-center 
-                            text-black text-center p-4 mono font-bold 
+            <div className="w-32 sm:w-56 h-16 sm:h-24 bg-white rounded-[2rem] flex items-center justify-center 
+                            text-black text-center p-2 sm:p-4 mono font-bold 
                             shadow-[6px_6px_0px_rgba(0,0,0,0.8)] 
                             hover:translate-y-[-4px] hover:translate-x-[-4px] 
-                            transition-transform duration-200 opacity-80 text-sm sm:text-base">
+                            transition-transform duration-200 opacity-80 text-xs sm:text-base">
               Download Curated Media
             </div>
           </div>
 
-          <div className="flex justify-center mb-24 sm:mb-36">
+          <div className="flex justify-center mb-16 sm:mb-36">
             <Link
               href="/vault"
-              className="mono px-6 sm:px-8 py-3 sm:py-4 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600
+              className="mono px-4 sm:px-8 py-2 sm:py-4 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600
                         hover:from-purple-600 hover:to-indigo-700 
-                        transition-all duration-300 transform hover:scale-105 font-semibold shadow-lg text-sm sm:text-base"
+                        transition-all duration-300 transform hover:scale-105 font-semibold shadow-lg text-xs sm:text-base"
             >
               ✦ Browse the Vault
             </Link>
@@ -223,17 +265,17 @@ export default function Home() {
         <div ref={faqsRef}>
           <FAQSection />
         </div>
-        <p className="flex justify-center text-gray-500 text-xs sm:text-sm mt-10 sm:mt-20 bg-black/60 px-2 py-2">
+        <p className="flex justify-center text-gray-500 text-xs sm:text-sm mt-6 sm:mt-20 bg-black/60 px-2 py-2">
           © {new Date().getFullYear()} GIB. All rights reserved.
         </p>
       </section>
 
       {/* Overlay */}
       {showOverlay && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900/80 border border-gray-700 rounded-3xl shadow-2xl w-full max-w-5xl h-[90%] sm:h-5/6 flex flex-col overflow-hidden">
-            <div className="flex justify-between items-center p-4 sm:p-6 border-b border-gray-700">
-              <h2 className="text-xl sm:text-2xl font-bold capitalize">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-gray-900/80 border border-gray-700 rounded-3xl shadow-2xl w-full max-w-lg sm:max-w-5xl h-[90%] sm:h-5/6 flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center p-3 sm:p-6 border-b border-gray-700">
+              <h2 className="text-lg sm:text-2xl font-bold capitalize">
                 {showOverlay === "submit" ? "Submit to GIB" : "Claim from GIB"}
               </h2>
               <button
@@ -246,7 +288,7 @@ export default function Home() {
 
             {showOverlay === "download" && (
               <div className="flex-1 relative overflow-y-auto">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 p-4 sm:p-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6 p-2 sm:p-6">
                   {memes.map((meme) => (
                     <div
                       key={meme.id}
@@ -255,7 +297,7 @@ export default function Home() {
                       <img
                         src={meme.url}
                         alt="meme"
-                        className="h-32 sm:h-40 object-cover"
+                        className="h-24 sm:h-40 object-cover w-full"
                       />
                       <button
                         onClick={() => handleDownload(meme.id, meme.url)}
@@ -266,10 +308,10 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <div className="sticky bottom-4 flex justify-end pr-4 sm:pr-6">
+                <div className="sticky bottom-2 sm:bottom-4 flex justify-end pr-2 sm:pr-6">
                   <Link
                     href="/vault"
-                    className="px-4 sm:px-5 py-2 rounded-xl bg-purple-600 text-white font-semibold shadow-lg hover:bg-purple-700 transition-all transform hover:scale-105 text-sm sm:text-base"
+                    className="px-3 sm:px-5 py-2 rounded-xl bg-purple-600 text-white font-semibold shadow-lg hover:bg-purple-700 transition-all transform hover:scale-105 text-xs sm:text-base"
                   >
                     View More ➜
                   </Link>
@@ -278,12 +320,12 @@ export default function Home() {
             )}
 
             {showOverlay === "submit" && (
-              <div className="flex-1 flex items-center justify-center bg-gray-800/70 p-6 border-t border-gray-700">
+              <div className="flex-1 flex items-center justify-center bg-gray-800/70 p-4 sm:p-6 border-t border-gray-700">
                 <a
                   href="https://docs.google.com/forms/d/e/1FAIpQLSdknKkhh7nGq1ja93a3xwxTJtDmqGd3Hf7vYGOJRvBNKa53cw/viewform?usp=dialog"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="cursor-pointer px-4 sm:px-6 py-3 sm:py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-center font-semibold text-sm sm:text-base"
+                  className="cursor-pointer px-3 sm:px-6 py-2 sm:py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-center font-semibold text-xs sm:text-base"
                 >
                   Go to Submission Form
                 </a>
