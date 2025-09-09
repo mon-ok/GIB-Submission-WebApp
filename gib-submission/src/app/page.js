@@ -4,8 +4,9 @@ import { useState, useRef } from "react";
 import Link from "next/link"
 import Featured from "./components/infiniteMarquee";
 import FAQSection from "./components/faqs";
-import GIBVault from "./components/vaultMarquee";
-import GIBVaultReverse from "./components/vaultMarquee-reverse";
+// import GIBVault from "./components/vaultMarquee";
+// import GIBVaultReverse from "./components/vaultMarquee-reverse";
+import ContractSection from "./components/contractSection";
 
 export default function Home() {
   const [memes, setMemes] = useState([
@@ -105,13 +106,9 @@ const scrollToFAQs = () => {
       </div>
 
       {/* Hero Section */}
-      <main className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-12 px-6 pb-16 items-center">
+      <main className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-12 px-6 pb-16">
         {/* Left Column: Text */}
-        <div className="">
-          <h1 className="text-5xl font-extrabold mb-6 white-glow">LIVE, LAUGH, GIB.</h1>
-        </div>
-
-        {/* Right Column: Buttons */}
+          <ContractSection />
         <div className="flex flex-col gap-6 px-4 py-14 border border-indigo-950 bg-indigo-400/10">
           <img
             src="/GIBNG.png"
