@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Twitter, Instagram, Users } from "lucide-react";
+import { Copy, Twitter, Instagram, Users, Youtube } from "lucide-react";
 
 export default function ContractSection() {
   const [copied, setCopied] = useState(false);
@@ -43,7 +43,7 @@ export default function ContractSection() {
         <div className="flex gap-6 mt-6">
             {/* X (Twitter) */}
             <a
-            href="https://x.com/gibthefrog"
+            href="https://x.com/gibthefrogcto"
             target="_blank"
             rel="noopener noreferrer"
             className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
@@ -51,19 +51,19 @@ export default function ContractSection() {
             <Twitter className="w-6 h-6" />
             </a>
 
-            {/* X Community */}
+            {/* Telegram */}
             <a
-            href="https://x.com/i/communities/1925636478324900072"
+            href="https://t.me/CTO_gib_official"
             target="_blank"
             rel="noopener noreferrer"
             className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
             >
-            <Users className="w-6 h-6" />
+            <img src="/telegram.png" className="w-6 h-6" alt="Telegram" />
             </a>
 
             {/* Dexscreener */}
             <a
-            href="https://dexscreener.com/solana/6FtbGaqgZzti1TxJksBV4PSya5of9VqA9vJNDxPwbonk"
+            href="https://dexscreener.com/solana/5bsguj2uesrsdpj1hebxbks1wa2pp9metmk3lnqme7tw"
             target="_blank"
             rel="noopener noreferrer"
             className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
@@ -73,17 +73,17 @@ export default function ContractSection() {
 
             {/* Instagram */}
             <a
-            href="https://www.instagram.com/gibthefrog/"
+            href="https://www.youtube.com/@gibthefrogofficial"
             target="_blank"
             rel="noopener noreferrer"
             className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
             >
-            <Instagram className="w-6 h-6" />
+            <Youtube className="w-6 h-6" />
             </a>
 
             {/* TikTok */}
             <a
-            href="https://www.tiktok.com/@gibfrog"
+            href="https://www.tiktok.com/@gibthefrogofficial"
             target="_blank"
             rel="noopener noreferrer"
             className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
