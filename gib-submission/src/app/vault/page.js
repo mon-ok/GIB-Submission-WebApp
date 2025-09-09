@@ -5,6 +5,7 @@ import { useState } from "react";
 
 export default function MemeGallery() {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [navOpen, setNavOpen] = useState(false); // <-- Add this line
 
   const images = [
     { id: 1, url: "/vault/gib-kuma-epic.jpg" },
@@ -58,32 +59,77 @@ export default function MemeGallery() {
         backgroundPosition: "center"
       }}
     >
-       <Link href="/" className="mono absolute top-10 left-6">
-          <img src="/LOGO.png" alt="home" className="h-12 w-auto ml-4 inline-block mr-2" />
-        </Link>
+      <Link href="/" className="mono absolute top-10 left-6">
+        <img src="/LOGO.png" alt="home" className="h-12 w-auto ml-4 inline-block mr-2" />
+      </Link>
       {/* Navbar */}
-      <header className="mono flex justify-center gap-16 mt-7 py-6 text-lg font-bold">
+      <header className="mono flex justify-center items-center gap-4 sm:gap-16 mt-7 py-6 text-lg font-bold relative">
+        {/* Hamburger button for mobile */}
         <button
-          onClick={() => scrollToSection("stickers")}
-          className="hover:text-gray-300"
+          className="sm:hidden flex flex-col justify-center items-center w-10 h-10 absolute right-4 top-8 -translate-y-1/2"
+          onClick={() => setNavOpen((v) => !v)}
+          aria-label="Open navigation"
         >
-          Stickers
+          <span className={`block w-6 h-0.5 bg-white mb-1 transition-all ${navOpen ? "rotate-45 translate-y-2" : ""}`}></span>
+          <span className={`block w-6 h-0.5 bg-white mb-1 transition-all ${navOpen ? "opacity-0" : ""}`}></span>
+          <span className={`block w-6 h-0.5 bg-white transition-all ${navOpen ? "-rotate-45 -translate-y-2" : ""}`}></span>
         </button>
-        <button
-          onClick={() => scrollToSection("videos")}
-          className="hover:text-gray-300"
-        >
-          Videos
-        </button>
-        <a
+        {/* Desktop nav */}
+        <nav className="hidden sm:flex gap-16">
+          <button
+            onClick={() => scrollToSection("stickers")}
+            className="hover:text-gray-300"
+          >
+            Stickers
+          </button>
+          <button
+            onClick={() => scrollToSection("videos")}
+            className="hover:text-gray-300"
+          >
+            Videos
+          </button>
+          <a
             href="https://docs.google.com/forms/d/e/1FAIpQLSdknKkhh7nGq1ja93a3xwxTJtDmqGd3Hf7vYGOJRvBNKa53cw/viewform?usp=dialog"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-gray-300 cursor-pointer"
-            >
+          >
             Submit Your Meme
-        </a>
+          </a>
+        </nav>
       </header>
+      {/* Mobile nav dropdown */}
+      {navOpen && (
+        <nav className="sm:hidden flex flex-col gap-4 bg-gray-900/95 border border-gray-800 rounded-xl mt-2 px-6 py-4 absolute left-1/2 -translate-x-1/2 top-24 z-20 shadow-lg w-11/12 max-w-xs">
+          <button
+            onClick={() => {
+              setNavOpen(false);
+              scrollToSection("stickers");
+            }}
+            className="hover:text-green-400 font-medium text-left"
+          >
+            Stickers
+          </button>
+          <button
+            onClick={() => {
+              setNavOpen(false);
+              scrollToSection("videos");
+            }}
+            className="hover:text-green-400 font-medium text-left"
+          >
+            Videos
+          </button>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdknKkhh7nGq1ja93a3xwxTJtDmqGd3Hf7vYGOJRvBNKa53cw/viewform?usp=dialog"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-green-400 font-medium text-left"
+            onClick={() => setNavOpen(false)}
+          >
+            Submit Your Meme
+          </a>
+        </nav>
+      )}
 
       {/* Content */}
       <main className="flex justify-center flex-1 px-6">
@@ -107,13 +153,14 @@ export default function MemeGallery() {
                     />
 
                     <a
-                        href={meme.url}
-                        download
-                        className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={(e) => e.stopPropagation()}
+                      href={meme.url}
+                      download
+                      className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow
+                        opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                        Download
-                        </a>
+                      Download
+                    </a>
                     </div>
                     ))}
                 </div>
