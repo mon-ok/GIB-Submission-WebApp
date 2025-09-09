@@ -276,17 +276,27 @@ const scrollToFAQs = () => {
 
       {showOverlay === "submit" && (
         <div className="flex-1 flex items-center justify-center bg-gray-800/70 p-6 border-t border-gray-700">
-          <label className="cursor-pointer px-6 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-center font-semibold">
-            Choose Files
-            <input
-              type="file"
-              multiple
-              accept="image/*,.gif,.mp4"
-              onChange={handleUpload}
-              className="hidden" // hide the default input
-            />
-          </label>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdknKkhh7nGq1ja93a3xwxTJtDmqGd3Hf7vYGOJRvBNKa53cw/viewform?usp=dialog"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer px-6 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-center font-semibold"
+          >
+            Go to Submission Form
+          </a>
         </div>
+        // <div className="flex-1 flex items-center justify-center bg-gray-800/70 p-6 border-t border-gray-700">
+        //   <label className="cursor-pointer px-6 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-center font-semibold">
+        //     Go to Submission Form
+        //     <input
+        //       type="file"
+        //       multiple
+        //       accept="image/*,.gif,.mp4"
+        //       onChange={handleUpload}
+        //       className="hidden" // hide the default input
+        //     />
+        //   </label>
+        // </div>
       )}
     </div>
   </div>

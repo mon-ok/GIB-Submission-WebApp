@@ -57,6 +57,14 @@ export default function MemeGallery() {
         >
           Videos
         </button>
+        <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdknKkhh7nGq1ja93a3xwxTJtDmqGd3Hf7vYGOJRvBNKa53cw/viewform?usp=dialog"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-300 cursor-pointer"
+            >
+            Submit Your Meme
+        </a>
       </header>
 
       {/* Content */}
