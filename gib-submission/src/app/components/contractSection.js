@@ -40,15 +40,25 @@ export default function ContractSection() {
         </div>
 
         {/* Social Icons */}
-        <div className="flex gap-6 mt-6">
+        <div className="flex gap-4 sm:gap-6 mt-6">
             {/* X (Twitter) */}
             <a
             href="https://x.com/gibthefrogcto"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
+            className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
             >
-            <Twitter className="w-6 h-6" />
+            <Twitter className="w-4 h-4 sm:w-6 sm:h-6" />
+            </a>
+
+            {/* X Community */}
+            <a
+            href="https://x.com/i/communities/1960668412134187235"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
+            >
+            <Users className="w-4 h-4 sm:w-6 sm:h-6" />
             </a>
 
             {/* Telegram */}
@@ -56,9 +66,9 @@ export default function ContractSection() {
             href="https://t.me/CTO_gib_official"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
+            className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
             >
-            <img src="/telegram.png" className="w-6 h-6" alt="Telegram" />
+            <img src="/telegram.png" className="w-4 h-4 sm:w-6 sm:h-6" alt="Telegram" />
             </a>
 
             {/* Dexscreener */}
@@ -66,19 +76,29 @@ export default function ContractSection() {
             href="https://dexscreener.com/solana/5bsguj2uesrsdpj1hebxbks1wa2pp9metmk3lnqme7tw"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
+            className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
             >
-            <img src="/dexscreener-no-text.png" className="w-6 h-6" alt="Dexscreener" />
+            <img src="/dexscreener-no-text.png" className="w-4 h-4 sm:w-6 sm:h-6" alt="Dexscreener" />
             </a>
 
-            {/* Instagram */}
+            {/* Youtube */}
             <a
             href="https://www.youtube.com/@gibthefrogofficial"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
+            className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
             >
-            <Youtube className="w-6 h-6" />
+            <Youtube className="w-4 h-4 sm:w-6 sm:h-6" />
+            </a>
+
+            {/* Instagram */}
+            <a
+            href="https://www.instagram.com/gibthefrogofficial/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
+            >
+            <Instagram className="w-4 h-4 sm:w-6 sm:h-6" />
             </a>
 
             {/* TikTok */}
@@ -86,13 +106,13 @@ export default function ContractSection() {
             href="https://www.tiktok.com/@gibthefrogofficial"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
+            className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center border border-white rounded-full transition transform hover:-translate-y-2"
             >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="white"
                 viewBox="0 0 24 24"
-                className="w-6 h-6"
+                className="w-4 h-4 sm:w-6 sm:h-6"
             >
                 <path d="M12 2c1.6 0 3 .4 4.3 1.2v2.2c-.8-.5-1.7-.9-2.7-1.1v9.5c0 3.4-2.8 6.2-6.2 6.2S1.2 17.2 1.2 13.8c0-3.3 2.6-6 5.8-6.2v2.5c-1.8.2-3.3 1.7-3.3 3.6 0 2 1.6 3.6 3.6 3.6s3.6-1.6 3.6-3.6V2h1.1z" />
             </svg>
