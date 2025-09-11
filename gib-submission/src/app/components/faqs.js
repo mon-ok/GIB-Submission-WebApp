@@ -25,7 +25,7 @@ export default function FAQSection() {
     {
       question: "What file formats are supported?",
       answer:
-        "You can upload PNG, JPG, GIF, and MP4 files. Maximum file size is 10MB per upload.",
+        "You can upload PNG, JPG, GIF, and MP4 files. Maximum file size is 50MB per upload.",
     },
     {
       question: "Is there a limit to how many memes I can upload?",
