@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -9,6 +9,8 @@ export default function MemeGallery() {
   const [navOpen, setNavOpen] = useState(false);
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
+  const [showOverlay, setShowOverlay] = useState(null); // 'submit' or null
+  const [selectedFileName, setSelectedFileName] = useState("");
 
   useEffect(() => {
     const fetchMedia = async () => {
@@ -76,14 +78,12 @@ export default function MemeGallery() {
           <button onClick={() => scrollToSection("videos")} className="hover:text-gray-300">
             Videos
           </button>
-          <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSdknKkhh7nGq1ja93a3xwxTJtDmqGd3Hf7vYGOJRvBNKa53cw/viewform?usp=dialog"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => setShowOverlay("submit")}
             className="hover:text-gray-300 cursor-pointer"
           >
             Submit Your Meme
-          </a>
+          </button>
         </nav>
       </header>
 
@@ -108,15 +108,15 @@ export default function MemeGallery() {
           >
             Videos
           </button>
-          <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSdknKkhh7nGq1ja93a3xwxTJtDmqGd3Hf7vYGOJRvBNKa53cw/viewform?usp=dialog"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => {
+              setNavOpen(false);
+              setShowOverlay("submit");
+            }}
             className="hover:text-green-400 font-medium text-left"
-            onClick={() => setNavOpen(false)}
           >
             Submit Your Meme
-          </a>
+          </button>
         </nav>
       )}
 
@@ -171,6 +171,130 @@ export default function MemeGallery() {
           onClick={() => setSelectedMedia(null)}
         >
           <img src={selectedMedia} alt="Magnified Media" className="max-h-[90%] max-w-[90%] rounded-lg shadow-2xl" />
+        </div>
+      )}
+
+      {/* Submission Overlay */}
+      {showOverlay === "submit" && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="relative flex flex-col items-center bg-gray-900 rounded-3xl p-6 sm:p-8 w-11/12 max-w-lg shadow-2xl border border-gray-700">
+            <button
+              onClick={() => setShowOverlay(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition"
+              aria-label="Close form"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h3 className="mono text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">Submit Your Meme</h3>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const title = formData.get("title");
+                const description = formData.get("description");
+                const submitted_by = formData.get("submitted_by");
+                const file = formData.get("file");
+
+                if (!title || !file) {
+                  alert("Title and file are required!");
+                  return;
+                }
+
+                const fileName = `${Date.now()}_${file.name}`;
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                  .from("media")
+                  .upload(fileName, file);
+
+                if (uploadError) {
+                  console.error("Upload error:", uploadError);
+                  alert("Failed to upload file.");
+                  return;
+                }
+
+                const { data: insertData, error: insertError } = await supabase
+                  .from("media_submissions")
+                  .insert({
+                    title,
+                    description,
+                    submitted_by,
+                    file_url: uploadData.path,
+                    status: "pending",
+                  });
+
+                if (insertError) {
+                  console.error("Insert error:", insertError);
+                  alert("Failed to submit meme.");
+                  return;
+                }
+
+                alert("Meme submitted successfully!");
+                setShowOverlay(null);
+              }}
+              className="flex flex-col gap-4 w-full"
+            >
+              <input
+                type="text"
+                name="title"
+                placeholder="Title"
+                className="mono px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
+                required
+              />
+              <input
+                type="text"
+                name="description"
+                placeholder="Description (optional)"
+                className="mono px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
+              />
+              <input
+                type="text"
+                name="submitted_by"
+                placeholder="Your Name or Email"
+                className="mono px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
+                required
+              />
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="file"
+                  className="mono font-semibold text-sm text-gray-200"
+                >
+                  Upload Meme File
+                </label>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                  <input
+                    id="file"
+                    type="file"
+                    name="file"
+                    accept="image/*,video/*"
+                    className="hidden"
+                    required
+                    onChange={(e) => {
+                      const fileName = e.target.files?.[0]?.name;
+                      setSelectedFileName(fileName || "");
+                    }}
+                  />
+                  <label
+                    htmlFor="file"
+                    className="mono px-5 py-2 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-semibold cursor-pointer transition shadow-md"
+                  >
+                    {selectedFileName ? "Change File" : "Select File"}
+                  </label>
+                  {selectedFileName && (
+                    <span className="mono text-xs text-gray-400 truncate max-w-[180px] min-h-[1.5rem] flex items-center">
+                      {selectedFileName}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="mono mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-full font-bold text-white transition shadow-lg"
+              >
+                Submit Meme
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>
