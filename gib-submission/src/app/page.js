@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
 import Featured from "./components/infiniteMarquee";
 import FAQSection from "./components/faqs";
@@ -60,6 +61,9 @@ export default function Home() {
     link.click();
     document.body.removeChild(link);
   };
+
+  // console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+  // console.log("KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
   return (
     <div className="relative min-h-screen text-white flex flex-col">
