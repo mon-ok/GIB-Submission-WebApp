@@ -5,31 +5,45 @@ import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
 import Featured from "./components/infiniteMarquee";
 import FAQSection from "./components/faqs";
-// import GIBVault from "./components/vaultMarquee";
-// import GIBVaultReverse from "./components/vaultMarquee-reverse";
 import ContractSection from "./components/contractSection";
 
 export default function Home() {
-  const [memes, setMemes] = useState([
-    { id: 1, url: "/vault/gib-logo-open.png" },
-    { id: 2, url: "/vault/gib-logo-default.png" },
-    { id: 3, url: "/vault/gib-duck-chill.png" },
-    { id: 4, url: "/vault/gib-frog-form.png" },
-    { id: 5, url: "/vault/gib-in-car.png" },
-    { id: 6, url: "/vault/gib-smoke.png" },
-    { id: 7, url: "/vault/gib-wave.png" },
-    { id: 8, url: "/vault/gib-yow.png" },
-  ]);
-
+  const [memes, setMemes] = useState([]);
+  const [selectedFileName, setSelectedFileName] = useState("");
   const [showOverlay, setShowOverlay] = useState(null);
   const [navOpen, setNavOpen] = useState(false);
 
   const vaultRef = useRef(null);
   const faqsRef = useRef(null);
 
-  const scrollToVault = () => {
-    vaultRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  useEffect(() => {
+    const fetchMemes = async () => {
+      // grab metadata from your table
+      const { data: submissions, error } = await supabase
+        .from("media_submissions")
+        .select("id, file_url, title, description, submitted_by, status")
+        .eq("status", "approved"); // only show approved ones
+
+        // console.log("submissions:", submissions);
+        // console.error("error:", error);
+
+      if (error) {
+        console.error("Error fetching memes:", error);
+        return;
+      }
+
+      const mapped = submissions.map((item) => ({
+        id: item.id,
+        url: item.file_url, 
+        title: item.title,
+        submitted_by: item.submitted_by,
+      }));
+
+      setMemes(mapped);
+    };
+
+    fetchMemes();
+  }, []);
 
   const scrollToFAQs = () => {
     faqsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,9 +75,6 @@ export default function Home() {
     link.click();
     document.body.removeChild(link);
   };
-
-  // console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-  // console.log("KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
   return (
     <div className="relative min-h-screen text-white flex flex-col">
@@ -293,24 +304,42 @@ export default function Home() {
             {showOverlay === "download" && (
               <div className="flex-1 relative overflow-y-auto">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-6 p-2 sm:p-6">
-                  {memes.map((meme) => (
-                    <div
-                      key={meme.id}
-                      className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl flex items-center justify-center"
-                    >
-                      <img
-                        src={meme.url}
-                        alt="meme"
-                        className="h-24 sm:h-40 object-cover w-full"
-                      />
-                      <button
-                        onClick={() => handleDownload(meme.id, meme.url)}
-                        className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        Download
-                      </button>
-                    </div>
-                  ))}
+                  {memes.length === 0 ? (
+                    <div>No memes found.</div>
+                  ) : (
+                     memes.slice(0, 8).map((meme) => {
+                      const ext = meme.url.split(".").pop().toLowerCase();
+                      const isVideo = ["mp4", "mov", "webm"].includes(ext);
+
+                      return (
+                        <div
+                          key={meme.id}
+                          className="relative group rounded-2xl overflow-hidden shadow-lg transform transition-all hover:scale-105 hover:shadow-xl flex items-center justify-center"
+                        >
+                          {isVideo ? (
+                            <video
+                              src={meme.url}
+                              controls
+                              className="h-24 sm:h-40 object-cover w-full"
+                            />
+                          ) : (
+                            <img
+                              src={meme.url}
+                              alt={meme.title || "meme"}
+                              className="h-24 sm:h-40 object-cover"
+                            />
+                          )}
+
+                          <button
+                            onClick={() => handleDownload(meme.id, meme.url)}
+                            className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            Download
+                          </button>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
                 <div className="sticky bottom-2 sm:bottom-4 flex justify-end pr-2 sm:pr-6">
                   <Link
@@ -324,15 +353,122 @@ export default function Home() {
             )}
 
             {showOverlay === "submit" && (
-              <div className="flex-1 flex items-center justify-center bg-gray-800/70 p-4 sm:p-6 border-t border-gray-700">
-                <a
-                  href="https://docs.google.com/forms/d/e/1FAIpQLSdknKkhh7nGq1ja93a3xwxTJtDmqGd3Hf7vYGOJRvBNKa53cw/viewform?usp=dialog"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cursor-pointer px-3 sm:px-6 py-2 sm:py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-center font-semibold text-xs sm:text-base"
+              <div className="flex-1 flex flex-col items-center justify-start bg-gray-800/70 p-4 sm:p-6 border-t border-gray-700 overflow-y-auto">
+                <h3 className="mono text-xl sm:text-2xl font-bold mb-4">Submit Your Meme</h3>
+
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+
+                    const formData = new FormData(e.target);
+                    const title = formData.get("title");
+                    const description = formData.get("description");
+                    const submitted_by = formData.get("submitted_by");
+                    const file = formData.get("file");
+
+                    if (!title || !file) {
+                      alert("Title and file are required!");
+                      return;
+                    }
+
+                    // Upload file to Supabase Storage
+                    const fileName = `${Date.now()}_${file.name}`;
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                      .from("media") 
+                      .upload(fileName, file);
+
+                    if (uploadError) {
+                      console.error("Upload error:", uploadError);
+                      alert("Failed to upload file.");
+                      return;
+                    }
+
+                    // Insert metadata into database
+                    const { data: insertData, error: insertError } = await supabase
+                      .from("media_submissions")
+                      .insert({
+                        title,
+                        description,
+                        submitted_by,
+                        file_url: uploadData.path,
+                        status: "pending",
+                      });
+
+                    if (insertError) {
+                      console.error("Insert error:", insertError);
+                      alert("Failed to submit meme.");
+                      return;
+                    }
+
+                    alert("Meme submitted successfully!");
+                    setShowOverlay(null);
+                  }}
+                  className="flex flex-col gap-4 w-full max-w-md"
                 >
-                  Go to Submission Form
-                </a>
+                  <input
+                    type="text"
+                    name="title"
+                    placeholder="Title"
+                    className="mono px-4 py-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                    required
+                  />
+                  <input
+                    type="text"
+                    name="description"
+                    placeholder="Description (optional)"
+                    className="mono px-4 py-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                  />
+                  <input
+                    type="text"
+                    name="submitted_by"
+                    placeholder="Your Name or Email"
+                    className="mono px-4 py-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+                    required
+                  />
+                  <div className="flex flex-col gap-2">
+                    <label
+                      htmlFor="file"
+                      className="mono font-semibold text-sm text-gray-200 mb-1"
+                    >
+                      Upload Meme File
+                    </label>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                      {/* Hide the default file input */}
+                      <input
+                        id="file"
+                        type="file"
+                        name="file"
+                        accept="image/*,video/*"
+                        className="hidden"
+                        required
+                        onChange={(e) => {
+                          const fileName = e.target.files?.[0]?.name;
+                          setSelectedFileName(fileName || "");
+                        }}
+                      />
+                      {/* Custom button to trigger file input */}
+                      <label
+                        htmlFor="file"
+                        className="mono px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold cursor-pointer transition"
+                        style={{ display: "inline-block" }}
+                      >
+                        {selectedFileName ? "Change File" : "Select File"}
+                      </label>
+                      {/* Show selected file name or nothing */}
+                      {selectedFileName && (
+                        <span className="mono text-xs text-gray-300 truncate max-w-[180px] min-h-[1.5rem] flex items-center">
+                          {selectedFileName}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    className="mono px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg font-semibold text-white transition"
+                  >
+                    Submit Meme
+                  </button>
+                </form>
               </div>
             )}
           </div>
