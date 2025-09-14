@@ -34,7 +34,8 @@ export default function Home() {
 
       const mapped = submissions.map((item) => ({
         id: item.id,
-        url: item.file_url, 
+        path: item.file_url, 
+        url: supabase.storage.from("media").getPublicUrl(item.file_url).data.publicUrl, 
         title: item.title,
         submitted_by: item.submitted_by,
       }));
@@ -49,31 +50,34 @@ export default function Home() {
     faqsRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const newMemes = files.map((file, index) => ({
-      id: memes.length + index + 1,
-      url: URL.createObjectURL(file),
-      likes: 0,
-      downloads: 0,
-    }));
-    setMemes([...memes, ...newMemes]);
-    setShowOverlay(null);
-  };
+  const handleDownload = async (id, path) => {
+  setMemes((prev) =>
+    prev.map((meme) =>
+      meme.id === id ? { ...meme, downloads: (meme.downloads || 0) + 1 } : meme
+    )
+  );
 
-  const handleDownload = (id, url) => {
-    setMemes((prev) =>
-      prev.map((meme) =>
-        meme.id === id ? { ...meme, downloads: meme.downloads + 1 } : meme
-      )
-    );
+  // Download the file as a Blob
+  const { data, error } = await supabase.storage
+    .from("media")
+    .download(path);
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = url.split("/").pop();
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  if (error) {
+    console.error("Download error:", error);
+    return;
+  }
+
+  // Create a blob URL for the file
+  const blobUrl = URL.createObjectURL(data);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = path.split("/").pop(); // filename
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // Cleanup blob URL
+  URL.revokeObjectURL(blobUrl);
   };
 
   return (
@@ -331,7 +335,7 @@ export default function Home() {
                           )}
 
                           <button
-                            onClick={() => handleDownload(meme.id, meme.url)}
+                            onClick={() => handleDownload(meme.id, meme.path)}
                             className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow opacity-0 group-hover:opacity-100 transition-opacity"
                           >
                             Download
@@ -400,7 +404,7 @@ export default function Home() {
                       return;
                     }
 
-                    alert("Meme submitted successfully!");
+                    alert("Meme submitted successfully! We'll review it shortly. Stay updated to see if it's approved.");
                     setShowOverlay(null);
                   }}
                   className="flex flex-col gap-4 w-full max-w-md"

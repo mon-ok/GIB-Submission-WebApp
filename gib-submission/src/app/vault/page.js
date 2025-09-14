@@ -26,7 +26,8 @@ export default function MemeGallery() {
 
       const mapped = submissions.map((item) => ({
         id: item.id,
-        url: item.file_url,
+        path: item.file_url,
+        url: supabase.storage.from("media").getPublicUrl(item.file_url).data.publicUrl, 
         title: item.title,
       }));
 
@@ -44,6 +45,33 @@ export default function MemeGallery() {
   const scrollToSection = (id) => {
     const section = document.getElementById(id);
     if (section) section.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleDownload = async (path, title) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("media")
+        .download(path);
+
+      if (error) {
+        console.error("Download error:", error);
+        return;
+      }
+
+      // Create a blob URL for the file
+      const blobUrl = URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = title || path.split("/").pop(); // use title if available, else filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Cleanup blob URL
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    }
   };
 
   return (
@@ -133,15 +161,16 @@ export default function MemeGallery() {
                   onClick={() => setSelectedMedia(meme.url)}
                 >
                   <img src={meme.url} alt={meme.title} className="h-40 w-full object-contain" />
-                  <a
-                    href={meme.url}
-                    download
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownload(meme.path, meme.title);
+                    }}
                     className="absolute bottom-3 right-3 bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg shadow
                     opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => e.stopPropagation()}
                   >
                     Download
-                  </a>
+                  </button>
                 </div>
               ))}
             </div>
@@ -229,7 +258,7 @@ export default function MemeGallery() {
                   return;
                 }
 
-                alert("Meme submitted successfully!");
+                alert("Meme submitted successfully! We'll review it shortly. Stay updated to see if it's approved.");
                 setShowOverlay(null);
               }}
               className="flex flex-col gap-4 w-full"
