@@ -14,8 +14,9 @@ export default function AdminAuthPage() {
   const [animate, setAnimate] = useState(false);
   const [pendingMemes, setPendingMemes] = useState([]);
   const [declinedMemes, setDeclinedMemes] = useState([]);
-  const [showPending, setShowPending] = useState(true);
+  const [view, setView] = useState("pending");
   const [isLoading, setIsLoading] = useState(false);
+  const [approvedMemes, setApprovedMemes] = useState([]);
 
   // Confirmation modal state
   const [confirmAction, setConfirmAction] = useState(null); 
@@ -37,14 +38,22 @@ export default function AdminAuthPage() {
       .eq("status", "declined")
       .order("created_at", { ascending: false });
 
-    if (pendingError || declinedError) {
-      console.error("Error fetching memes:", pendingError || declinedError);
+    const { data: approvedData, error: approvedError } = await supabase
+        .from("media_submissions")
+        .select("*")
+        .eq("status", "approved")
+        .order("created_at", { ascending: false });
+
+    if (pendingError || declinedError || approvedError) {
+        console.error("Error fetching memes:", pendingError || declinedError || approvedError);
     } else {
-      setPendingMemes(pendingData || []);
-      setDeclinedMemes(declinedData || []);
+        setPendingMemes(pendingData || []);
+        setDeclinedMemes(declinedData || []);
+        setApprovedMemes(approvedData || []);
     }
+
     setIsLoading(false);
-  };
+    };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -256,6 +265,34 @@ export default function AdminAuthPage() {
     </div>
   );
 
+  const ApprovedMemeCard = ({ meme }) => (
+    <div className="relative p-6 rounded-2xl bg-gray-800/50 shadow-xl backdrop-blur-md border border-gray-700/50 flex flex-col items-center">
+        {meme.file_url && (
+        /\.(mp4|webm|mov)$/i.test(meme.file_url) ? (
+            <video src={getPublicUrl(meme.file_url)} controls className="w-full h-48 object-contain mb-4 rounded-xl shadow-inner" />
+        ) : (
+            <img src={getPublicUrl(meme.file_url)} alt={meme.title} className="w-full h-48 object-contain mb-4 rounded-xl shadow-inner" />
+        )
+        )}
+        <div className="w-full text-center">
+        <h3 className="text-xl font-bold mb-1">{meme.title}</h3>
+        <p className="text-sm text-gray-400 mb-2">{meme.description}</p>
+        <p className="text-xs text-gray-500">By: {meme.submitted_by}</p>
+        </div>
+        <div className="flex gap-3 mt-4">
+        <button
+            className="px-5 py-2 bg-red-600 hover:bg-red-700 rounded-full text-white font-semibold transition shadow-md"
+            onClick={() => {
+            setConfirmAction("delete");
+            setSelectedMeme(meme);
+            }}
+        >
+            Delete
+        </button>
+        </div>
+    </div>
+    );
+
   if (isAuthenticated) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 text-white p-6">
@@ -269,40 +306,56 @@ export default function AdminAuthPage() {
         <div className="mt-4 w-full max-w-4xl">
           <div className="flex justify-center mb-14 gap-4">
             <button
-              className={`px-6 py-2 rounded-full font-semibold transition ${showPending ? "bg-blue-600 shadow-lg" : "bg-gray-700 hover:bg-gray-600"}`}
-              onClick={() => setShowPending(true)}
+                className={`px-6 py-2 rounded-full font-semibold transition ${view === "pending" ? "bg-blue-600 shadow-lg" : "bg-gray-700 hover:bg-gray-600"}`}
+                onClick={() => setView("pending")}
             >
-              Pending ({pendingMemes.length})
+                Pending ({pendingMemes.length})
             </button>
             <button
-              className={`px-6 py-2 rounded-full font-semibold transition ${!showPending ? "bg-red-600 shadow-lg" : "bg-gray-700 hover:bg-gray-600"}`}
-              onClick={() => setShowPending(false)}
+                className={`px-6 py-2 rounded-full font-semibold transition ${view === "declined" ? "bg-red-600 shadow-lg" : "bg-gray-700 hover:bg-gray-600"}`}
+                onClick={() => setView("declined")}
             >
-              Declined ({declinedMemes.length})
+                Declined ({declinedMemes.length})
             </button>
-          </div>
+            <button
+                className={`px-6 py-2 rounded-full font-semibold transition ${view === "approved" ? "bg-green-600 shadow-lg" : "bg-gray-700 hover:bg-gray-600"}`}
+                onClick={() => setView("approved")}
+            >
+                Approved ({approvedMemes.length})
+            </button>
+            </div>
 
           {isLoading ? (
             <div className="text-center text-gray-400 mt-12">Loading...</div>
-          ) : showPending ? (
+            ) : view === "pending" ? (
             pendingMemes.length === 0 ? (
-              <p className="text-center text-gray-400 mt-12">No pending memes at the moment.</p>
+                <p className="text-center text-gray-400 mt-12">No pending memes at the moment.</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 fade-in-up">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 fade-in-up">
                 {pendingMemes.map((meme) => (
-                  <MemeCard key={meme.id} meme={meme} />
+                    <MemeCard key={meme.id} meme={meme} />
                 ))}
-              </div>
+                </div>
             )
-          ) : declinedMemes.length === 0 ? (
-            <p className="text-center text-gray-400 mt-12">No memes have been declined yet.</p>
-          ) : (
+            ) : view === "declined" ? (
+            declinedMemes.length === 0 ? (
+                <p className="text-center text-gray-400 mt-12">No memes have been declined yet.</p>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 fade-in-up">
+                {declinedMemes.map((meme) => (
+                    <DeclinedMemeCard key={meme.id} meme={meme} />
+                ))}
+                </div>
+            )
+            ) : approvedMemes.length === 0 ? (
+            <p className="text-center text-gray-400 mt-12">No memes have been approved yet.</p>
+            ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 fade-in-up">
-              {declinedMemes.map((meme) => (
-                <DeclinedMemeCard key={meme.id} meme={meme} onBackToPending={onBackToPending} onDelete={() => onDelete(meme.id, meme.file_url)}/>
-              ))}
+                {approvedMemes.map((meme) => (
+                <ApprovedMemeCard key={meme.id} meme={meme} />
+                ))}
             </div>
-          )}
+            )}
         </div>
 
         {/* Confirmation Modal */}
