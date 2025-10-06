@@ -6,6 +6,7 @@ import Link from "next/link";
 import Featured from "./components/infiniteMarquee";
 import FAQSection from "./components/faqs";
 import ContractSection from "./components/contractSection";
+// import RoadmapSection from "./components/roadmapSection";
 
 export default function Home() {
   const [memes, setMemes] = useState([]);
@@ -281,6 +282,7 @@ export default function Home() {
           backgroundRepeat: "no-repeat",
         }}
       >
+        {/* <RoadmapSection /> */}
         <div ref={faqsRef}>
           <FAQSection />
         </div>
